@@ -1,4 +1,4 @@
-// TODO add timer variable
+// timer variable
 var timer = 0;
 //question array
 var questionArr = [
