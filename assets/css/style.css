@@ -1,4 +1,57 @@
 /* TODO Style header, add margins, align left and right, use flex spacebetween */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    /* more on this crazy alphanumerical value in a minute! Was I supposed to copy this too? */
+   font-family: Helvetica, Arial, sans-serif;
+}
+
+/*header styling start */
+header {
+    padding: 40px 0px 20px 0px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    top: 0;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-position: 80%;
+    z-index: 9999;
+}
+
+header h1 {
+    display: flex;
+    padding: 5px 10px 5px 100px;
+    color:#ffffff;
+    background-color: rgb(48, 48, 48);
+    text-align: right;
+    margin-left: 0;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+header h1:hover {
+    background-color: #8a8a8a;
+    color: rgb(48, 48, 48);;
+}
+
+header div {
+    display: flex;
+    padding: 5px 100px 5px 10px;
+    color:#ffffff;
+    background-color: rgb(48, 48, 48);
+    text-align: left;
+    margin-right: 0;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 20px;
+}
 
 /* TODO Main Section, set %margins on left and right*/
 
