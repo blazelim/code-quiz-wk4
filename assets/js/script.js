@@ -6,7 +6,12 @@ var questionArea = document.getElementById("questions");
 var answerBoxesArea = document.getElementById("answer-boxes");
 var correctWrongArea = document.getElementById("correct-wrong");
 var questionNumber = 0;
-
+var highscoreArr = [];
+var enteredInitials = "";
+var currentScore = {
+    playerInitials: "",
+    Score:0
+};
 //question array
 var questionArr = [
     {
@@ -43,15 +48,60 @@ var endgame = function () {
     questionArea.innerHTML = "";
     answerBoxesArea.innerHTML = "";
     correctWrongArea.innerHTML = "";
-    questionArea.textContent = "All Done!"
+
+    var allDone = document.createElement("div");
+    allDone.className = "pregameHeader";
+    allDone.textContent = "All Done!"
+    questionArea.appendChild(allDone);
+
     var postgameP = document.createElement('p');
     postgameP.className = "pregameParagraph";
-    postgameP.textContent = "Your final score is" + timeLeft;
+    postgameP.textContent = "Your final score is " + timeLeft;
     questionArea.appendChild(postgameP);
+
+    var formDiv = document.createElement("div");
+    formDiv.innerHTML = "<form id='initials-form'><div class='form-group'><input type='text' name='initials-name' placeholder='Enter your initials here!' /></div><div class='form-group'><button class='buttons center' id='save-highscore' type='button'>Save Highscore!</button></div></form>"
+    questionArea.appendChild(formDiv);
+
+    initialsInput();
+}
+
+// function to acknowledge the newly created save highscore button and add eventlistener
+function initialsInput() {
+    var saveHighscoreBtn = document.querySelector('#save-highscore');
+    console.log("initialsInput function is referenced");
+    saveHighscoreBtn.addEventListener("click", saveHighscoreFunc);
+}
+
+// inputing the entered initials
+function saveHighscoreFunc() {
+    enteredInitials = document.querySelector("input[name='initials-name']").value;
+    enteredInitials = enteredInitials.toUpperCase();
+    console.log(enteredInitials);
+    if (enteredInitials.length != 2) {
+        alert("You need to enter your two letter initials!");
+        endgame();
+    }
+    else {
+        currentScore.playerInitials = enteredInitials;
+        currentScore.Score = timeLeft;
+        console.log(currentScore);
+        highscoreArr.push(currentScore);
+
+        //stringifying the highscore array to be saved in localstorage
+        var stringifiedHighscoreArr = JSON.stringify(highscoreArr);
+        localStorage.setItem("savedScoreArr", stringifiedHighscoreArr);
+        displayHighScore();
+    };
 }
 
 // pregame function
 var preGame = function () {
+
+    // clear fields before each game starts
+    questionArea.innerHTML = "";
+    answerBoxesArea.innerHTML = "";
+    correctWrongArea.innerHTML = "";
 
     // adding pregame header data
     var pregameHeader = document.createElement("h1");
@@ -67,7 +117,7 @@ var preGame = function () {
 
     // inserting the start button that starts the game
     var startGameButton = document.createElement("div");
-    startGameButton.className = "buttons start-game";
+    startGameButton.className = "buttons center";
     startGameButton.id = "start-game-id"
     startGameButton.textContent = "Start Game";
     answerBoxesArea.appendChild(startGameButton);
@@ -99,6 +149,8 @@ var timerFunction = function() {
 // interval for countdownfunction
 var countdown = function(){setInterval(timerFunction,1000);}
 
+// function for removing correctwrong prompt after 1 seconds
+var removeBottom = function(){setTimeout(function() {correctWrongArea.innerHTML = "";},1000)};
 
 function startGame() {
     console.log("test startGame")
@@ -118,6 +170,7 @@ function answerCheck(clickedId) {
         questionNumber++;
         questionHandler(questionNumber);
         correctWrongArea.textContent = "You got question #" + questionNumber + " correct!"
+        removeBottom();
     } else {
         console.log("you got it wrong!")
         timeLeft = timeLeft - 10;
@@ -125,6 +178,7 @@ function answerCheck(clickedId) {
         questionNumber++;
         questionHandler(questionNumber);
         correctWrongArea.textContent = "You got question #" + questionNumber + " wrong."
+        removeBottom();
     }
 };
 
@@ -158,18 +212,52 @@ function questionHandler(i) {
 
 
 // TODO add display highscores function
+function obtainSavedScores () {
+    highscoreArr = localStorage.getItem("savedScoreArr");
+    highscoreArr = JSON.parse(highscoreArr);
+};
 
 var displayHighScore = function() {
-    //startGame();
-    stopCountdown();
+    questionArea.innerHTML = "";
+    answerBoxesArea.innerHTML = "";
+    correctWrongArea.innerHTML = "";
+
+    var scoreboardTitle = document.createElement("div");
+    scoreboardTitle.className = "pregameHeader";
+    scoreboardTitle.textContent = "Highscore List"
+    questionArea.appendChild(scoreboardTitle);
+
+    for (var i = 0; i < highscoreArr.length; i++) {
+        var individualScore = document.createElement("div");
+        individualScore.className = "pregameParagraph";
+        individualScore.textContent = highscoreArr[i].playerInitials + " - " + highscoreArr[i].Score;
+        questionArea.appendChild(individualScore);
+    };
+
+    var goBackBtn = document.createElement("div");
+    goBackBtn.className = "buttons center";
+    goBackBtn.textContent = "Start Over";
+    answerBoxesArea.appendChild(goBackBtn);
+    goBackBtn.addEventListener("click", preGame);
+
+    var clrBoard = document.createElement("div");
+    clrBoard.className = "buttons center";
+    clrBoard.textContent = "Clear scoreboard";
+    answerBoxesArea.appendChild(clrBoard);
+    clrBoard.addEventListener("click", clearScoreboard);
+
 }
 
-
-// TODO add answering questions function (removing previous questions and answer)
-
-// TODO add right wrong display 1 second, with "Question #"
-
+function clearScoreboard() {
+    highscoreArr = [];
+    var stringifiedHighscoreArr = JSON.stringify(highscoreArr);
+    localStorage.setItem("savedScoreArr", stringifiedHighscoreArr);
+    displayHighScore();
+}
 // TODO add localStorage functions and loading
 
+
+
 highscoreLink.addEventListener("click", displayHighScore);
+obtainSavedScores();
 preGame();
