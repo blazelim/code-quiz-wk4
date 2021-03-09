@@ -27,7 +27,7 @@ var questionArr = [
     {
         question:"String values must be enclosed within _____ when being assigned to variables",
         answerChoices:["1. comma", "2. curly brackets", "3. quotes", "4. parentheses"],
-        correctAnswer:"4. parentheses"
+        correctAnswer:"3. quotes"
     },
     {
         question:"A very useful tool used during development and debugging for printing content to the debugger is:",
@@ -40,6 +40,14 @@ var questionArr = [
 var endgame = function () {
     console.log("LOL we should have put an endgame")
     stopCountdown();
+    questionArea.innerHTML = "";
+    answerBoxesArea.innerHTML = "";
+    correctWrongArea.innerHTML = "";
+    questionArea.textContent = "All Done!"
+    var postgameP = document.createElement('p');
+    postgameP.className = "pregameParagraph";
+    postgameP.textContent = "Your final score is" + timeLeft;
+    questionArea.appendChild(postgameP);
 }
 
 // pregame function
@@ -109,12 +117,14 @@ function answerCheck(clickedId) {
         console.log("you got it right!")
         questionNumber++;
         questionHandler(questionNumber);
+        correctWrongArea.textContent = "You got question #" + questionNumber + " correct!"
     } else {
         console.log("you got it wrong!")
         timeLeft = timeLeft - 10;
         timerEl.textContent = timeLeft;
         questionNumber++;
         questionHandler(questionNumber);
+        correctWrongArea.textContent = "You got question #" + questionNumber + " wrong."
     }
 };
 
