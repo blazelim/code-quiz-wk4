@@ -41,59 +41,6 @@ var questionArr = [
     }
 ]
 
-// TODO add endgame function
-var endgame = function () {
-    console.log("LOL we should have put an endgame")
-    stopCountdown();
-    questionArea.innerHTML = "";
-    answerBoxesArea.innerHTML = "";
-    correctWrongArea.innerHTML = "";
-
-    var allDone = document.createElement("div");
-    allDone.className = "pregameHeader";
-    allDone.textContent = "All Done!"
-    questionArea.appendChild(allDone);
-
-    var postgameP = document.createElement('p');
-    postgameP.className = "pregameParagraph";
-    postgameP.textContent = "Your final score is " + timeLeft;
-    questionArea.appendChild(postgameP);
-
-    var formDiv = document.createElement("div");
-    formDiv.innerHTML = "<form id='initials-form'><div class='form-group'><input type='text' name='initials-name' placeholder='Enter your initials here!' /></div><div class='form-group'><button class='buttons center' id='save-highscore' type='button'>Save Highscore!</button></div></form>"
-    questionArea.appendChild(formDiv);
-
-    initialsInput();
-}
-
-// function to acknowledge the newly created save highscore button and add eventlistener
-function initialsInput() {
-    var saveHighscoreBtn = document.querySelector('#save-highscore');
-    console.log("initialsInput function is referenced");
-    saveHighscoreBtn.addEventListener("click", saveHighscoreFunc);
-}
-
-// inputing the entered initials
-function saveHighscoreFunc() {
-    enteredInitials = document.querySelector("input[name='initials-name']").value;
-    enteredInitials = enteredInitials.toUpperCase();
-    console.log(enteredInitials);
-    if (enteredInitials.length != 2) {
-        alert("You need to enter your two letter initials!");
-        endgame();
-    }
-    else {
-        currentScore.playerInitials = enteredInitials;
-        currentScore.Score = timeLeft;
-        console.log(currentScore);
-        highscoreArr.push(currentScore);
-
-        //stringifying the highscore array to be saved in localstorage
-        var stringifiedHighscoreArr = JSON.stringify(highscoreArr);
-        localStorage.setItem("savedScoreArr", stringifiedHighscoreArr);
-        displayHighScore();
-    };
-}
 
 // pregame function
 var preGame = function () {
@@ -134,6 +81,7 @@ function stopCountdown() {
     }
 };
 
+// allowed timer to stop incase time runs out
 var timerFunction = function() {
     if (timeLeft > 0) {
         timeLeft--;
@@ -162,7 +110,8 @@ function startGame() {
     questionNumber = 0;
     questionHandler(questionNumber);
 }
-    
+
+// function to check answers for each question
 function answerCheck(clickedId) {
     console.log(clickedId)
     if (clickedId === correctAnswer) {
@@ -207,26 +156,76 @@ function questionHandler(i) {
 };
 
 
+// endgame function
+var endgame = function () {
+    console.log("LOL we should have put an endgame")
+    stopCountdown();
+    questionArea.innerHTML = "";
+    answerBoxesArea.innerHTML = "";
+    correctWrongArea.innerHTML = "";
 
-    
+    // creating alldone header for the end of the game
+    var allDone = document.createElement("div");
+    allDone.className = "pregameHeader";
+    allDone.textContent = "All Done!"
+    questionArea.appendChild(allDone);
 
+    // allowed showing of the score in end game
+    var postgameP = document.createElement('p');
+    postgameP.className = "pregameParagraph";
+    postgameP.textContent = "Your final score is " + timeLeft;
+    questionArea.appendChild(postgameP);
 
-// TODO add display highscores function
-function obtainSavedScores () {
-    highscoreArr = localStorage.getItem("savedScoreArr");
-    highscoreArr = JSON.parse(highscoreArr);
-};
+    // inserting the HTML needed to create a form
+    var formDiv = document.createElement("div");
+    formDiv.innerHTML = "<form id='initials-form'><div class='form-group'><input type='text' name='initials-name' placeholder='Enter your initials here!' /></div><div class='form-group'><button class='buttons center' id='save-highscore' type='button'>Save Highscore!</button></div></form>"
+    questionArea.appendChild(formDiv);
 
+    initialsInput();
+}
+
+// function to acknowledge the newly created save highscore button and add eventlistener
+function initialsInput() {
+    var saveHighscoreBtn = document.querySelector('#save-highscore');
+    console.log("initialsInput function is referenced");
+    saveHighscoreBtn.addEventListener("click", saveHighscoreFunc);
+}
+
+// inputing the entered initials
+function saveHighscoreFunc() {
+    enteredInitials = document.querySelector("input[name='initials-name']").value;
+    enteredInitials = enteredInitials.toUpperCase();
+    console.log(enteredInitials);
+    if (enteredInitials.length != 2) {
+        alert("You need to enter your two letter initials!");
+        endgame();
+    }
+    else {
+        currentScore.playerInitials = enteredInitials;
+        currentScore.Score = timeLeft;
+        console.log(currentScore);
+        highscoreArr.push(currentScore);
+
+        //stringifying the highscore array to be saved in localstorage
+        var stringifiedHighscoreArr = JSON.stringify(highscoreArr);
+        localStorage.setItem("savedScoreArr", stringifiedHighscoreArr);
+        displayHighScore();
+    };
+}
+
+// added display function for both endgame and topleft link
 var displayHighScore = function() {
     questionArea.innerHTML = "";
     answerBoxesArea.innerHTML = "";
     correctWrongArea.innerHTML = "";
 
+    //header for the scoreboard
     var scoreboardTitle = document.createElement("div");
     scoreboardTitle.className = "pregameHeader";
     scoreboardTitle.textContent = "Highscore List"
     questionArea.appendChild(scoreboardTitle);
 
+    // for loop to input all the save scores
     for (var i = 0; i < highscoreArr.length; i++) {
         var individualScore = document.createElement("div");
         individualScore.className = "pregameParagraph";
@@ -234,12 +233,14 @@ var displayHighScore = function() {
         questionArea.appendChild(individualScore);
     };
 
+    // insertion of button to start over from scoreboard
     var goBackBtn = document.createElement("div");
     goBackBtn.className = "buttons center";
     goBackBtn.textContent = "Start Over";
     answerBoxesArea.appendChild(goBackBtn);
     goBackBtn.addEventListener("click", preGame);
 
+    // insertion of button to clear board and wipe the local storage
     var clrBoard = document.createElement("div");
     clrBoard.className = "buttons center";
     clrBoard.textContent = "Clear scoreboard";
@@ -248,15 +249,24 @@ var displayHighScore = function() {
 
 }
 
+// function to wipe the local storage
 function clearScoreboard() {
     highscoreArr = [];
     var stringifiedHighscoreArr = JSON.stringify(highscoreArr);
     localStorage.setItem("savedScoreArr", stringifiedHighscoreArr);
     displayHighScore();
 }
-// TODO add localStorage functions and loading
 
-
+// obtaining saved score as soon as the page loads
+function obtainSavedScores () {
+    if (localStorage.getItem("savedScoreArr") === null) {
+        var emptyArray = [];
+        emptyArray = JSON.stringify(emptyArray);
+        localStorage.setItem("savedScoreArr", emptyArray);
+    }
+    highscoreArr = localStorage.getItem("savedScoreArr");
+    highscoreArr = JSON.parse(highscoreArr);
+};
 
 highscoreLink.addEventListener("click", displayHighScore);
 obtainSavedScores();
