@@ -1,5 +1,12 @@
 // timer variable
-var timer = 0;
+var timerEl = document.getElementById('time-left');
+var timeLeft = 0;
+var highscoreLink = document.getElementById("highscore-header");
+var questionArea = document.getElementById("questions");
+var answerBoxesArea = document.getElementById("answer-boxes");
+var correctWrongArea = document.getElementById("correct-wrong");
+var questionNumber = 0;
+
 //question array
 var questionArr = [
     {
@@ -28,17 +35,125 @@ var questionArr = [
         correctAnswer:"4. console.log"
     }
 ]
-// TODO add timer function
-
-// TODO add display highscores function
-var highscoreLink = document.querySelector("#highscore-link");
-
-var displayHighScore = function() {
-    console.log(questionArr[4].answerChoices[2]);
-};
-// TODO add display questions functions
 
 // TODO add endgame function
+var endgame = function () {
+    console.log("LOL we should have put an endgame")
+    stopCountdown();
+}
+
+// pregame function
+var preGame = function () {
+
+    // adding pregame header data
+    var pregameHeader = document.createElement("h1");
+    pregameHeader.className = "pregameHeader";
+    pregameHeader.textContent = "Coding Quiz Challenge";
+    questionArea.appendChild(pregameHeader);
+
+    // adding paragraph explaining the game
+    var pregameP = document.createElement('p');
+    pregameP.className = "pregameParagraph"
+    pregameP.textContent = "Try to answer the following code-related questions within the time limit. Keep in mind that incorrect answers will penalize your score/time by 10 seconds!"
+    questionArea.appendChild(pregameP);
+
+    // inserting the start button that starts the game
+    var startGameButton = document.createElement("div");
+    startGameButton.className = "buttons start-game";
+    startGameButton.id = "start-game-id"
+    startGameButton.textContent = "Start Game";
+    answerBoxesArea.appendChild(startGameButton);
+
+    // inserting interactivity with the start button
+    var startGameButtonEl = document.getElementById("start-game-id");
+    startGameButtonEl.addEventListener("click", startGame);
+};
+
+// stopping all counttdowns
+function stopCountdown() {
+    for(i=0; i<10000; i++) {
+        window.clearInterval(i);
+    }
+};
+
+var timerFunction = function() {
+    if (timeLeft > 0) {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+    } else {
+        timeLeft = 0;
+        timerEl.textContent = timeLeft;
+        stopCountdown();
+        endgame();
+    }
+} 
+
+// interval for countdownfunction
+var countdown = function(){setInterval(timerFunction,1000);}
+
+
+function startGame() {
+    console.log("test startGame")
+    timeLeft = 75;
+    timerEl.textContent = timeLeft;
+    countdown();
+    // for loop for all questions (maybe switch for the final question?)
+    // reseting question number to 1 (or 0 in arrays)
+    questionNumber = 0;
+    questionHandler(questionNumber);
+}
+    
+function answerCheck(clickedId) {
+    console.log(clickedId)
+    if (clickedId === correctAnswer) {
+        console.log("you got it right!")
+        questionNumber++;
+        questionHandler(questionNumber);
+    } else {
+        console.log("you got it wrong!")
+        timeLeft = timeLeft - 10;
+        timerEl.textContent = timeLeft;
+        questionNumber++;
+        questionHandler(questionNumber);
+    }
+};
+
+//function to handle each question
+function questionHandler(i) {
+    // creating if else statement to handle last question
+    if (i < questionArr.length) {
+        // clean main area to insert questions immediately after
+        questionArea.innerHTML = "";
+        answerBoxesArea.innerHTML = "";
+        correctWrongArea.innerHTML = "";
+        questionArea.textContent = questionArr[i].question;
+        correctAnswer = questionArr[i].correctAnswer;
+        //for loop to enter each answerchoice
+        for (var j = 0; j < questionArr[i].answerChoices.length; j++) {
+            var answerButton = document.createElement("div");
+            answerButton.className = "buttons";
+            answerButton.id = questionArr[i].answerChoices[j];
+            answerButton.textContent = questionArr[i].answerChoices[j];
+            answerButton.setAttribute('onclick', "answerCheck(this.id)");
+            answerBoxesArea.appendChild(answerButton);
+        }
+    } else {
+        endgame();
+    }
+};
+
+
+
+    
+
+
+// TODO add display highscores function
+
+var displayHighScore = function() {
+    //startGame();
+    stopCountdown();
+}
+
 
 // TODO add answering questions function (removing previous questions and answer)
 
@@ -46,4 +161,5 @@ var displayHighScore = function() {
 
 // TODO add localStorage functions and loading
 
-highscoreLink.addEventListener("click", displayHighScore)
+highscoreLink.addEventListener("click", displayHighScore);
+preGame();
