@@ -202,6 +202,12 @@ function saveHighscoreFunc() {
         console.log(currentScore);
         highscoreArr.push(currentScore);
 
+        //reset array after pushing it to the score board
+        currentScore = {
+            playerInitials: "",
+            Score:0
+        };
+
         //stringifying the highscore array to be saved in localstorage
         var stringifiedHighscoreArr = JSON.stringify(highscoreArr);
         localStorage.setItem("savedScoreArr", stringifiedHighscoreArr);
@@ -225,7 +231,7 @@ var displayHighScore = function() {
     scoreboardTitle.textContent = "Highscore List"
     questionArea.appendChild(scoreboardTitle);
 
-    // for loop to input all the save scores
+    // for loop to input all the saved scores
     for (var i = 0; i < highscoreArr.length; i++) {
         var individualScore = document.createElement("div");
         individualScore.className = "pregameParagraph";
