@@ -196,11 +196,7 @@ function saveHighscoreFunc() {
     enteredInitials = document.querySelector("input[name='initials-name']").value;
     enteredInitials = enteredInitials.toUpperCase();
     console.log(enteredInitials);
-    if (enteredInitials.length != 2) {
-        alert("You need to enter your two letter initials!");
-        endgame();
-    }
-    else {
+    if (enteredInitials.length === 2 && (!/[^A-Z]/.test(enteredInitials))) {
         currentScore.playerInitials = enteredInitials;
         currentScore.Score = timeLeft;
         console.log(currentScore);
@@ -210,6 +206,10 @@ function saveHighscoreFunc() {
         var stringifiedHighscoreArr = JSON.stringify(highscoreArr);
         localStorage.setItem("savedScoreArr", stringifiedHighscoreArr);
         displayHighScore();
+    }
+    else {
+        alert("You need to enter your two letter initials!");
+        endgame();
     };
 }
 
