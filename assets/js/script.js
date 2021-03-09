@@ -178,7 +178,7 @@ var endgame = function () {
 
     // inserting the HTML needed to create a form
     var formDiv = document.createElement("div");
-    formDiv.innerHTML = "<form id='initials-form'><div class='form-group'><input type='text' name='initials-name' placeholder='Enter your initials here!' /></div><div class='form-group'><button class='buttons center' id='save-highscore' type='button'>Save Highscore!</button></div></form>"
+    formDiv.innerHTML = "<form onkeypress='return event.keyCode != 13' id='initials-form'><div class='form-group'><input type='text' name='initials-name' placeholder='Enter your initials here!' /></div><div class='form-group'><button class='buttons center' id='save-highscore' type='button'>Save Highscore!</button></div></form>"
     questionArea.appendChild(formDiv);
 
     initialsInput();
